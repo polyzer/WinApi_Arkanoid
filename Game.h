@@ -1,0 +1,45 @@
+#pragma once
+#include "arkanoid_includes.h"
+#include "Level.h"
+
+class Game {
+public:
+	int lifes; //жизни
+	long points; // очки игрока
+	int speed; // текущая скорость игры
+	int maxSpeed; // максимальная скорость игры
+	int minSpeed; // начальная скорость игры
+	char stopSymbol; // символ, по нажатию на который игра прерывается!
+	char pauseSymbol; // символ паузы!
+	int saveStatus; // статус сохранения: 0 - новая игра, 1 - загрузка
+	int FPS; //количество кадров
+	std::vector <Level> Levels;
+	int CurrentLevelNumber;
+	std::string CurrentLevelName;
+	Game() {
+		this->setStandard();
+	}
+
+	void setStandard() { // устанавливает начальные значения
+		this->FPS = 30;
+		minSpeed = 1000;
+		maxSpeed = 50;
+		stopSymbol = 113; //символ оканчивающий игру
+		pauseSymbol = 32;
+		lifes = 3;
+		points = 0;
+		speed = minSpeed; //стартовая скорость
+		saveStatus = 0; //0 - new, 1 - load
+	}
+	
+	bool loadCurrentLevel();
+	bool createLevel(std::string LName); //загружает уровень в зависимости от номера
+	void increasePoints(char c); // увеличивает очки в зависимости от элемента
+	void speedUp(int spd); // изменяет скорость
+	void setLifes(); //изменяет количество попыток
+	void render(HDC hdc, static int sx, static int sy); //рисует все
+	void destroyBlock(int y, int x); // обработка уничтожения блоков
+	void printInfo();
+	void Play(); // Начало игры
+	void End(); //Конец уровня!
+};
