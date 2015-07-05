@@ -1,6 +1,10 @@
 #pragma once
 #include "arkanoid_includes.h"
 
+extern Ball CurrentBall;
+extern HWND hWnd;
+extern Platform CurrentPlatform;
+
 void Game::Play() {
 	CurrentBall.timer++; // счетчик проходов для замедления скорости шара
 	if (CurrentBall.timer >= CurrentBall.speed) {
@@ -64,7 +68,7 @@ bool Game::createLevel(std::string LName) { // Создание/загрузка уровней
 	newlevel.number = CurrentGame.Levels.size();
 	FILE *level_file;
 	if ((level_file = fopen(newlevel.name.c_str(), "r")) == NULL) {
-		MessageBox(hWnd, _T(newlevel.name.c_str()), 
+		MessageBox(hWnd, (LPCWSTR) newlevel.name.c_str(), 
 		_T("Файл не открывается"), MB_YESNO | MB_ICONQUESTION
 		);
 	}
@@ -83,6 +87,7 @@ bool Game::createLevel(std::string LName) { // Создание/загрузка уровней
 	}
 	fclose(level_file);
 	CurrentGame.Levels.push_back(newlevel);
+	return true;
 }
 
 bool Game::loadCurrentLevel() { // Создание/загрузка уровней
@@ -99,9 +104,30 @@ bool Game::loadCurrentLevel() { // Создание/загрузка уровней
 			CurrentLevel.Map[i][j] = CurrentGame.Levels[CurrentGame.CurrentLevelNumber].Map[i][j];
 		}
 	}
-
+	return true;
 }
 
+bool Game::loadLevelsFromFile()
+{
+	int nff;
+	HANDLE hff;
+	WIN32_FIND_DATA datas;
+
+	hff = FindFirstFile(L"LEVELS\\*.*", &datas);
+	if (hff != INVALID_HANDLE_VALUE) 
+	{
+		for (;;)
+		{
+			nff = FindNextFile(hff, &datas);
+			if (!nff)
+				break;
+			CurrentGame.createLevel(ws2mb(datas.cFileName));
+		}
+	} else 
+		return false;
+	FindClose(hff);
+	return true;
+}
 
 
 void Game::End() { // перенести функцию в Level.End

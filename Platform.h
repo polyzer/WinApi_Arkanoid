@@ -1,7 +1,7 @@
 #pragma once
-#include "arkanoid_includes.h"
 
 extern Game CurrentGame;
+extern Level CurrentLevel;
 
 struct Platform {
 	char symbol; // символы используемые в качестве платформы

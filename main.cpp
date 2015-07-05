@@ -1,6 +1,11 @@
 #pragma once
 #include "arkanoid_includes.h"
 
+extern WNDCLASS wc;
+extern HWND hWnd;
+extern MSG msg;
+extern Platform CurrentPlatform;
+
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
 TCHAR WinName[] = _T("MainFrame") ;
 int APIENTRY _tWinMain(HINSTANCE This, // Дескриптор текущего приложения
@@ -8,10 +13,10 @@ int APIENTRY _tWinMain(HINSTANCE This, // Дескриптор текущего приложения
 	LPTSTR cmd,                       // Командная строка
 	int mode)                         // Режим отображения окна
 {
-
-	CurrentLevel.setNullLevel();
-	
-	
+	Level lnew;
+	lnew.setNullLevel();
+	CurrentGame.Levels.push_back(lnew);
+		
 	// Определение класса окна
 	wc.hInstance = This;
 	wc.lpszClassName = WinName;                // Имя класса окна
@@ -57,8 +62,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 	switch(message)
 	{
 		case WM_CREATE:
-
-
 			SetTimer(hWnd, 1, CurrentGame.FPS, NULL);
 		break;
 		case WM_SIZE:

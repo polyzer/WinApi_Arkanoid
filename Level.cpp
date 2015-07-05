@@ -2,6 +2,9 @@
 #include "arkanoid_includes.h"
 
 extern Game CurrentGame;
+extern HWND hWnd;
+extern Ball CurrentBall;
+extern Platform CurrentPlatform;
 
 Level::~Level() {
     for (int i = 0; i < this->Size_Strings; i++) {

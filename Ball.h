@@ -1,5 +1,4 @@
 #pragma once
-#include "arkanoid_includes.h"
 
 struct Ball {
 	COORD position; // позици€ м€ча

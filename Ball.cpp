@@ -1,6 +1,8 @@
 #pragma once
 #include "arkanoid_includes.h"
 
+extern Platform CurrentPlatform;
+
 bool Ball::screenOut(){
 /*	if ((this->position.X <= 0) && (this->course.X < 0)) {
 		return true;
@@ -58,7 +60,7 @@ bool Ball::collision() {
 	if (this->position.Y == (CurrentLevel.Size_Strings - 1)) {
 		// Проигрыш!!!!
 		CurrentGame.lifes--;
-		CurrentBall.setStandard(); //установка начального положения шара
+		this->setStandard(); //установка начального положения шара
 		CurrentPlatform.setStandard(); //установка начального положения платформы
 		if (CurrentGame.lifes == 0) {
 		//	 обработка конца игры!

@@ -1,6 +1,8 @@
 #pragma once
 #include "arkanoid_includes.h"
 
+extern Ball CurrentBall;
+
 bool Platform::outOfSize(int course){
 	// обработка выхода за экран
 	if((this->position.Y == 0) && (course == 1)) {

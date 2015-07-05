@@ -1,5 +1,4 @@
 #pragma once
-#include "arkanoid_includes.h"
 
 class Level {
 public:
@@ -12,7 +11,7 @@ public:
 	int minSpeedTime; //начальная скорость шара на уровне
 	int maxSpeedTime; //максимальная скорость шара на уровне
 	int stepNorm; // количество шагов шара для изменения скорости
-	Level(){};
+	Level();
 	Level(std::string LName);
 	~Level();
 	void setStandard() {

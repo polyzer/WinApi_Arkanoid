@@ -1,5 +1,4 @@
 #pragma once
-#include "arkanoid_includes.h"
 #include "Level.h"
 
 class Game {
@@ -32,12 +31,13 @@ public:
 		saveStatus = 0; //0 - new, 1 - load
 	}
 	
+	bool loadLevelsFromFile();
 	bool loadCurrentLevel();
-	bool createLevel(std::string LName); //загружает уровень в зависимости от номера
+	bool createLevel(std::string LName); //загружает уровень в зависимости от имени
 	void increasePoints(char c); // увеличивает очки в зависимости от элемента
 	void speedUp(int spd); // изменяет скорость
 	void setLifes(); //изменяет количество попыток
-	void render(HDC hdc, static int sx, static int sy); //рисует все
+	void render(HDC hdc, int sx, int sy); //рисует все
 	void destroyBlock(int y, int x); // обработка уничтожения блоков
 	void printInfo();
 	void Play(); // Начало игры
