@@ -19,9 +19,6 @@ struct Ball {
 		this->position.X = pos.X;
 		this->position.Y = pos.Y;
 	}
-	void setColor(int col) {
-		this->color = col;
-	}
 	void step(); // шаг мяча
 	void setCourse(int side); //1 - вправо, 0 - влево
 	bool collision(); //столкновения и выход за границы окна

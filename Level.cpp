@@ -66,11 +66,18 @@ void Level::setNullLevel()// устанавливает нулевой уровень
 		for (int j = 0; j < this->Size_Columns; j++) {
 			if (i == 0) {
 				this->Map[i][j] = 'c';
-			} else{
+			}else{
 				this->Map[i][j] = this->back;
 			}
+			std::string str;
+			str.resize(1);
+			str[0] = Map[i][j];
+			MessageBox(NULL, (LPCWSTR) str.c_str(), 
+			_T("Ќулевой уровень"), MB_OK | MB_ICONQUESTION
+			);
 		}
 	}
+
 	CurrentBall.setStandard();
 	CurrentGame.setStandard();
 	CurrentPlatform.setStandard();

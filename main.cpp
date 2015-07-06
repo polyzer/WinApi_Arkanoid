@@ -5,6 +5,7 @@ extern WNDCLASS wc;
 extern HWND hWnd;
 extern MSG msg;
 extern Platform CurrentPlatform;
+extern HDC hdc;
 
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
 TCHAR WinName[] = _T("MainFrame") ;
@@ -57,7 +58,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 	          WPARAM wParam, LPARAM lParam)
 {       // Обработчик сообщений
 	PAINTSTRUCT ps;
-	HDC hdc;
 	static int sx, sy;
 	switch(message)
 	{
@@ -73,7 +73,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 		break;
 		case WM_PAINT:
 			hdc = BeginPaint(hWnd, &ps);
-			CurrentGame.render(hdc, sx, sy);
+			CurrentGame.render(sx, sy);
 			EndPaint(hWnd, &ps);
 		break;
 		case WM_KEYDOWN:

@@ -24,9 +24,6 @@ struct Platform {
 		this->position.X = pos.X;
 		this->position.Y = pos.Y;
 	}
-	void setColor(int col) {
-		this->color = col;
-	}
 	bool moveControl(int control);//Глобальная функция проверки перемещения
 	bool outOfSize(int control);//Проверка выхода за границы экрана
 	bool blockCollision(int control);//Проверка столкновения с блоком

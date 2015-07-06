@@ -23,3 +23,4 @@ bool createConfig();
 bool saveConfig();
 bool readConfig();
 std::string ws2mb( LPCWSTR src);
+void setElementColor(char elem);

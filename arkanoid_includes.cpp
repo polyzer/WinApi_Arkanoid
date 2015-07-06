@@ -18,6 +18,7 @@ std::string ws2mb( LPCWSTR src) {
     return cch ? data : std::string();
 }
 
+HDC hdc;
 HWND hWnd; // Дескриптор главного окна программы
 MSG msg; // Структура для хранения сообщения
 WNDCLASS wc; // Класс окна
@@ -30,8 +31,20 @@ Level CurrentLevel; // Текущий уровень
 char config_file_name_ca[] = "config.cnf"; //файл конфигурации
 //DWORD FILE_PATH_BUF_DW = 255;
 //char FILE_PATH_ca [255];
+HPEN hpen;
+
 
 void setElementColor(char elem){
+	switch(elem) 
+	{
+		case ((char) 32):
+			hpen = (HPEN) 	GetStockObject(NULL_PEN);	
+		break;
+		default:
+			hpen = (HPEN) 	GetStockObject(BLACK_PEN);
+		break;
+	}
+	SelectObject(hdc, hpen);
 }
 
 bool createConfig() //создание файла концигурации

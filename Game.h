@@ -37,7 +37,7 @@ public:
 	void increasePoints(char c); // увеличивает очки в зависимости от элемента
 	void speedUp(int spd); // изменяет скорость
 	void setLifes(); //изменяет количество попыток
-	void render(HDC hdc, int sx, int sy); //рисует все
+	void render(int sx, int sy); //рисует все
 	void destroyBlock(int y, int x); // обработка уничтожения блоков
 	void printInfo();
 	void Play(); // Начало игры

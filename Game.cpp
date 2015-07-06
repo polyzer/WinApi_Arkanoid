@@ -4,6 +4,7 @@
 extern Ball CurrentBall;
 extern HWND hWnd;
 extern Platform CurrentPlatform;
+extern HDC hdc;
 
 void Game::Play() {
 	CurrentBall.timer++; // счетчик проходов для замедления скорости шара
@@ -36,11 +37,12 @@ void Game::destroyBlock(int y, int x) {
 	CurrentLevel.Map[y][x] = CurrentLevel.back;
 }
 
-void Game::render(HDC hdc, static int sx, static int sy) { //рисователь
+void Game::render(static int sx, static int sy) { //рисователь
 	COORD cube_size;
 	cube_size.X = sx / CurrentLevel.Size_Columns;
 	cube_size.Y = sy / CurrentLevel.Size_Strings;
 	MoveToEx(hdc, 0, 0, NULL);
+	setElementColor((char) 32);
 	for (int i=0; i<CurrentLevel.Size_Strings; i++)
 	{
 		for (int j=0; j<CurrentLevel.Size_Columns; j++)
@@ -48,15 +50,22 @@ void Game::render(HDC hdc, static int sx, static int sy) { //рисователь
 			if (CurrentPlatform.position.X == j && CurrentPlatform.position.Y == i)
 			{
 				for(int k = 0; k < CurrentPlatform.length; k++)
-					Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);
+					setElementColor(CurrentPlatform.symbol);
+				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);
 				j += (CurrentPlatform.length - 1); // j
 				continue;
 			}
 			else if (CurrentBall.position.X == j && CurrentBall.position.Y == i) {
-					Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);				
+				setElementColor(CurrentBall.symbol);
+				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);				
 				continue;
-			}else {
-					Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);	
+			}else if (CurrentLevel.Map[i][j] != CurrentLevel.back){
+				setElementColor(CurrentLevel.Map[i][j]);
+				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);								
+			}
+			else {
+				setElementColor(CurrentLevel.back);
+				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);	
 			}
 		}
 	}
