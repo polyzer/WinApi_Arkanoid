@@ -8,17 +8,15 @@ public:
 	int speed; // текущая скорость игры
 	int maxSpeed; // максимальная скорость игры
 	int minSpeed; // начальная скорость игры
-	char stopSymbol; // символ, по нажатию на который игра прерывается!
-	char pauseSymbol; // символ паузы!
+	wchar_t stopSymbol; // символ, по нажатию на который игра прерывается!
+	wchar_t pauseSymbol; // символ паузы!
 	int saveStatus; // статус сохранения: 0 - новая игра, 1 - загрузка
 	int FPS; //количество кадров
-	std::vector <Level> Levels;
+	std::vector <Level*> Levels; // Указатели на уровни...
 	int CurrentLevelNumber;
-	std::string CurrentLevelName;
-	Game() {
-		this->setStandard();
-	}
-
+	LPCWSTR CurrentLevelName;
+	Game();
+	~Game();
 	void setStandard() { // устанавливает начальные значения
 		this->FPS = 30;
 		minSpeed = 1000;
@@ -33,8 +31,8 @@ public:
 	
 	bool loadLevelsFromFile();
 	bool loadCurrentLevel();
-	bool createLevel(std::string LName); //загружает уровень в зависимости от имени
-	void increasePoints(char c); // увеличивает очки в зависимости от элемента
+	bool createLevel(LPCWSTR LName); //загружает уровень в зависимости от имени
+	void increasePoints(wchar_t c); // увеличивает очки в зависимости от элемента
 	void speedUp(int spd); // изменяет скорость
 	void setLifes(); //изменяет количество попыток
 	void render(int sx, int sy); //рисует все

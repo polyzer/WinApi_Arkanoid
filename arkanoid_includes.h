@@ -6,12 +6,7 @@
 #define _UNICODE
 #endif
 #include <Windows.h>
-#include <tchar.h>
-#include <iostream>
-#include <clocale>
 #include <cstdio>
-#include <conio.h>
-#include <string>
 #include <vector>
 #include "Game.h"
 #include "Level.h"
@@ -23,4 +18,4 @@ bool createConfig();
 bool saveConfig();
 bool readConfig();
 std::string ws2mb( LPCWSTR src);
-void setElementColor(char elem);
+void setElementColor(wchar_t elem);

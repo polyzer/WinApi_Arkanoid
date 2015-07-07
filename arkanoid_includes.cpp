@@ -22,23 +22,23 @@ HDC hdc;
 HWND hWnd; // Дескриптор главного окна программы
 MSG msg; // Структура для хранения сообщения
 WNDCLASS wc; // Класс окна
-Platform CurrentPlatform;// объект платформы
 Game CurrentGame; // объект текущей игры
-Ball CurrentBall; //объект мяча
 Level CurrentLevel; // Текущий уровень
+Platform CurrentPlatform;// объект платформы
+Ball CurrentBall; //объект мяча
 //Текущий уровень контролируется CurrentGame переменной. Которая ею манипулирует
 
-char config_file_name_ca[] = "config.cnf"; //файл конфигурации
+wchar_t config_file_name_ca[] = L"config.cnf"; //файл конфигурации
 //DWORD FILE_PATH_BUF_DW = 255;
-//char FILE_PATH_ca [255];
+//wchar_t FILE_PATH_ca [255];
 HPEN hpen;
 
 
-void setElementColor(char elem){
+void setElementColor(wchar_t elem){
 	switch(elem) 
 	{
-		case ((char) 32):
-			hpen = (HPEN) 	GetStockObject(NULL_PEN);	
+		case L' ':
+			hpen = (HPEN) GetStockObject(NULL_PEN);	
 		break;
 		default:
 			hpen = (HPEN) 	GetStockObject(BLACK_PEN);
@@ -50,15 +50,15 @@ void setElementColor(char elem){
 bool createConfig() //создание файла концигурации
 {
 	FILE *config_Fp;
-	if ((config_Fp = fopen(config_file_name_ca, "w")) != NULL)
+	if ((config_Fp = _wfopen(config_file_name_ca, L"w")) != NULL)
 	{
-	  MessageBox(hWnd, _T("Конфигурационный файл создан"), 
-		_T("Конфигурационный файл"), MB_OK | MB_ICONQUESTION
+	  MessageBox(hWnd, L"Конфигурационный файл создан", 
+		L"Конфигурационный файл", MB_OK | MB_ICONQUESTION
 	  );
 		return true;
 	} else {
-		MessageBox(hWnd, _T("Не удалось создать конфигурационный файл!!!!"), 
-			_T("Конфигурационный файл"), MB_OK | MB_ICONQUESTION
+		MessageBox(hWnd, L"Не удалось создать конфигурационный файл!!!!", 
+			L"Конфигурационный файл", MB_OK | MB_ICONQUESTION
 		);
 		return false;
 	}
@@ -69,29 +69,27 @@ bool createConfig() //создание файла концигурации
 bool saveConfig() // сохранение концигурации при выходе
 {
 	FILE *file_Fp;
-	if ((file_Fp = fopen(config_file_name_ca, "w")) != NULL)
+	if ((file_Fp = _wfopen(config_file_name_ca, L"w")) != NULL)
 	{
-		fprintf(file_Fp, "%i \n", CurrentGame.lifes);
-		fprintf(file_Fp, "%i \n", CurrentGame.points);
-		fprintf(file_Fp, "%i \n", CurrentBall.speed);
-		fprintf(file_Fp, "%i \n", CurrentBall.timer);
-		fprintf(file_Fp, "%i \n", CurrentBall.stepNum);
-		fprintf(file_Fp, "%i %i \n", CurrentBall.position.X, CurrentBall.position.Y);
-		fprintf(file_Fp, "%i %i \n", CurrentBall.course.X, CurrentBall.course.Y);
-		fprintf(file_Fp, "%i %i \n", CurrentPlatform.position.X, CurrentPlatform.position.Y);
-		fprintf(file_Fp, "%s \n", CurrentGame.CurrentLevelName);
-		fprintf(file_Fp, "%i \n", CurrentGame.saveStatus);
+		fwprintf(file_Fp, L"%i \n", CurrentGame.lifes);
+		fwprintf(file_Fp, L"%i \n", CurrentGame.points);
+		fwprintf(file_Fp, L"%i \n", CurrentBall.speed);
+		fwprintf(file_Fp, L"%i \n", CurrentBall.timer);
+		fwprintf(file_Fp, L"%i \n", CurrentBall.stepNum);
+		fwprintf(file_Fp, L"%i %i \n", CurrentBall.position.X, CurrentBall.position.Y);
+		fwprintf(file_Fp, L"%i %i \n", CurrentBall.course.X, CurrentBall.course.Y);
+		fwprintf(file_Fp, L"%i %i \n", CurrentPlatform.position.X, CurrentPlatform.position.Y);
+		fwprintf(file_Fp, L"%s\n", CurrentLevel.name);
+		fwprintf(file_Fp, L"%i \n", CurrentGame.saveStatus);
 		for (int i = 0; i < CurrentLevel.Size_Strings; i++)
 		{
 			for (int j = 0; j < CurrentLevel.Size_Columns; j++)
 			{
-				fprintf(file_Fp, "%c", CurrentLevel.Map[i][j]);
+				fwprintf(file_Fp, L"%c", CurrentLevel.Map[i][j]);
 			}
-			fprintf(file_Fp, "\n");
+			fwprintf(file_Fp, L"\n");
 		}
 		fclose(file_Fp);
-		system("cls");
-		printf("Сессия сохранена!");
 		return true;
 	} else {
 
@@ -105,31 +103,29 @@ bool saveConfig() // сохранение концигурации при выходе
 bool readConfig() // чтение и загрузка конфигурации
 {
 	FILE *file_Fp;
-	if ((file_Fp = fopen(config_file_name_ca, "r")) != NULL)
+	if ((file_Fp = _wfopen(config_file_name_ca, L"r")) != NULL)
 	{
 		//Считывание!!!
-		fscanf(file_Fp, "%i", &CurrentGame.lifes);
-		fscanf(file_Fp, "%i", &CurrentGame.points);
-		fscanf(file_Fp, "%i", &CurrentBall.speed);
-		fscanf(file_Fp, "%i", &CurrentBall.timer);
-		fscanf(file_Fp, "%i", &CurrentBall.stepNum);
-		fscanf(file_Fp, "%i %i", &CurrentBall.position.X, &CurrentBall.position.Y);
-		fscanf(file_Fp, "%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
-		fscanf(file_Fp, "%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
+		fwscanf(file_Fp, L"%i", &CurrentGame.lifes);
+		fwscanf(file_Fp, L"%i", &CurrentGame.points);
+		fwscanf(file_Fp, L"%i", &CurrentBall.speed);
+		fwscanf(file_Fp, L"%i", &CurrentBall.timer);
+		fwscanf(file_Fp, L"%i", &CurrentBall.stepNum);
+		fwscanf(file_Fp, L"%i %i", &CurrentBall.position.X, &CurrentBall.position.Y);
+		fwscanf(file_Fp, L"%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
+		fwscanf(file_Fp, L"%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
 		fseek(file_Fp, 2, SEEK_CUR);
-		fscanf(file_Fp, "%s", &CurrentGame.CurrentLevelNumber);
-		fscanf(file_Fp, "%i", &CurrentGame.saveStatus);
+		fwscanf(file_Fp, L"%s", &CurrentGame.CurrentLevelNumber);
+		fwscanf(file_Fp, L"%i", &CurrentGame.saveStatus);
 		fseek(file_Fp, 3, SEEK_CUR);
 		if (CurrentGame.saveStatus == 1) {
 			for (int i = 0; i < CurrentLevel.Size_Strings; i++) {
 				for (int j = 0; j < CurrentLevel.Size_Columns; j++) {
-					fscanf(file_Fp, "%c", &CurrentLevel.Map[i][j]);
+					fwscanf(file_Fp, L"%c", &CurrentLevel.Map[i][j]);
 				}
 				fseek(file_Fp, 2, SEEK_CUR);
 			}
-			printf("Загружена прошлая игра!\n");
-			system("pause");
-			system("cls");
+
 		} else if (CurrentGame.saveStatus == 0) {
 			CurrentGame.loadCurrentLevel(); // новая игра
 		}
@@ -137,47 +133,46 @@ bool readConfig() // чтение и загрузка конфигурации
 		return true;
 	} else {
 		if (createConfig()) {
-			if ((file_Fp = fopen(config_file_name_ca, "r")) != NULL)
+			if ((file_Fp = _wfopen(config_file_name_ca, L"r")) != NULL)
 			{
 				// считывание!!!
-				fscanf(file_Fp, "%i", &CurrentGame.lifes);
-				fscanf(file_Fp, "%i", &CurrentGame.points);
-				fscanf(file_Fp, "%i", &CurrentBall.speed);
-				fscanf(file_Fp, "%i", &CurrentBall.timer);
-				fscanf(file_Fp, "%i", &CurrentBall.stepNum);
-				fscanf(file_Fp, "%i %i", &CurrentBall.position.X, &CurrentBall.position.Y);
-				fscanf(file_Fp, "%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
-				fscanf(file_Fp, "%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
+				fwscanf(file_Fp, L"%i", &CurrentGame.lifes);
+				fwscanf(file_Fp, L"%i", &CurrentGame.points);
+				fwscanf(file_Fp, L"%i", &CurrentBall.speed);
+				fwscanf(file_Fp, L"%i", &CurrentBall.timer);
+				fwscanf(file_Fp, L"%i", &CurrentBall.stepNum);
+				fwscanf(file_Fp, L"%i %i", &CurrentBall.position.X, &CurrentBall.position.Y);
+				fwscanf(file_Fp, L"%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
+				fwscanf(file_Fp, L"%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
 				fseek(file_Fp, 2, SEEK_CUR);
-				fscanf(file_Fp, "%s", &CurrentGame.CurrentLevelName);
-				fscanf(file_Fp, "%i", &CurrentGame.saveStatus);
+				fwscanf(file_Fp, L"%s", &CurrentGame.CurrentLevelName);
+				fwscanf(file_Fp, L"%i", &CurrentGame.saveStatus);
 				if (CurrentGame.saveStatus == 1) {
 					for (int i = 0; i < CurrentLevel.Size_Strings; i++) {
 						for (int j = 0; j < CurrentLevel.Size_Columns; j++) {
-							fscanf(file_Fp, "%c", &CurrentLevel.Map[i][j]);
+							fwscanf(file_Fp, L"%c", &CurrentLevel.Map[i][j]);
 						}
 						fseek(file_Fp, 2, SEEK_CUR);
 					}
 				} else if (CurrentGame.saveStatus == 0) {
 					CurrentGame.CurrentLevelNumber = 0;
 					CurrentGame.loadCurrentLevel();
-
-			   	    MessageBox(hWnd, _T("Новая игра!"), 
-					_T("Игра"), MB_OK | MB_ICONQUESTION
+			   	    MessageBox(hWnd, L"Новая игра!", 
+					L"Игра", MB_OK | MB_ICONQUESTION
 					);	
 				}
 				fclose(file_Fp);
 				return true;
 			} else {
-		  	    MessageBox(hWnd, _T("Конфигурационный файл существует, но из него невозможно считать данные!"), 
-				_T("Конфигурационный файл"), MB_OK | MB_ICONQUESTION
+		  	    MessageBox(hWnd, L"Конфигурационный файл существует, но из него невозможно считать данные!", 
+				L"Конфигурационный файл", MB_OK | MB_ICONQUESTION
 				);	
 				fclose(file_Fp);
 				return false;
 			}
 		} else {
-	 	    MessageBox(hWnd, _T("Не удается записать и прочитать данные!"), 
-			_T("Данные"), MB_OK | MB_ICONQUESTION
+	 	    MessageBox(hWnd, L"Не удается записать и прочитать данные!", 
+			L"Данные", MB_OK | MB_ICONQUESTION
 			);	
 			return false;
 		}

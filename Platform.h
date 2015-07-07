@@ -4,9 +4,9 @@ extern Game CurrentGame;
 extern Level CurrentLevel;
 
 struct Platform {
-	char symbol; // символы используемые в качестве платформы
-	char color; //цвет платформы
-	char length; //длина платформы
+	wchar_t symbol; // символы используемые в качестве платформы
+	wchar_t color; //цвет платформы
+	wchar_t length; //длина платформы
 	COORD position; // координаты левого конца
 	Platform() {
 		this->setStandard(); //

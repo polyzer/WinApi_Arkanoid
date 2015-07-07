@@ -8,18 +8,16 @@ extern Platform CurrentPlatform;
 
 Level::~Level() {
     for (int i = 0; i < this->Size_Strings; i++) {
-        for (int j = 0; j < this->Size_Columns; j++){
-            free(Map[i]);
-        }
+         delete [] Map[i];
     }
-    free(Map);
+    delete [] Map;
 }
 
 void Level::End(bool status) {
 	if (status == true) {
 			if (CurrentGame.CurrentLevelNumber == (CurrentGame.Levels.size() - 1)){
-				MessageBox(hWnd, _T("Вы прошли все доступные уровни! Поехали сначала..."), 
-				_T("Конец"), MB_OK | MB_ICONQUESTION
+				MessageBox(hWnd, L"Вы прошли все доступные уровни! Поехали сначала...", 
+				L"Конец", MB_OK | MB_ICONQUESTION
 				);
 				CurrentGame.CurrentLevelNumber = 0;
 			} else {
@@ -32,8 +30,8 @@ void Level::End(bool status) {
 			CurrentGame.saveStatus = 1;
 			saveConfig();
 	} else {
-		int i = MessageBox(hWnd, _T("Сохранить игру"), 
-		_T("Сохранение"), MB_YESNO | MB_ICONQUESTION
+		int i = MessageBox(hWnd, L"Сохранить игру", 
+		L"Сохранение", MB_YESNO | MB_ICONQUESTION
 		);
 		if (i == IDYES) {
 			CurrentGame.loadCurrentLevel();
@@ -47,17 +45,18 @@ void Level::End(bool status) {
 }
 
 
-void Level::reMap(bool init)
+void Level::reMap()
 {
-	if (!init){ 
+	if (!this->init){ 
 		for(int i = 0; i < this->Size_Strings; i++)
-			free(this->Map[i]);
-		free(Map);
-	}
+			delete [] Map[i];
+		delete [] Map;
+	} else 
+		this->init = false;// убираем значение инициализациии, чтобы очищать память в след раз
 
-	Map = (char**) malloc(this->Size_Strings * sizeof(char*));
+	Map = new wchar_t *[this->Size_Strings];
 	for (int i = 0; i < this->Size_Strings; i++)
-		Map[i] = (char*) malloc(this->Size_Columns * sizeof(char));
+		Map[i] = new wchar_t[this->Size_Columns];
 }
 
 void Level::setNullLevel()// устанавливает нулевой уровень
@@ -65,16 +64,10 @@ void Level::setNullLevel()// устанавливает нулевой уровень
 	for (int i = 0; i < this->Size_Strings; i++) {
 		for (int j = 0; j < this->Size_Columns; j++) {
 			if (i == 0) {
-				this->Map[i][j] = 'c';
+				this->Map[i][j] = L'c';
 			}else{
 				this->Map[i][j] = this->back;
 			}
-			std::string str;
-			str.resize(1);
-			str[0] = Map[i][j];
-			MessageBox(NULL, (LPCWSTR) str.c_str(), 
-			_T("Нулевой уровень"), MB_OK | MB_ICONQUESTION
-			);
 		}
 	}
 
@@ -86,5 +79,5 @@ void Level::setNullLevel()// устанавливает нулевой уровень
 Level::Level() 
 {
 	this->setStandard();
-	this->reMap(1);
+	this->reMap();
 }

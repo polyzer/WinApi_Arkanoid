@@ -8,16 +8,17 @@ extern Platform CurrentPlatform;
 extern HDC hdc;
 
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
-TCHAR WinName[] = _T("MainFrame") ;
-int APIENTRY _tWinMain(HINSTANCE This, // Дескриптор текущего приложения
+TCHAR WinName[] = L"MainFrame";
+int APIENTRY wWinMain(HINSTANCE This, // Дескриптор текущего приложения
 	HINSTANCE Prev,                   // В современных системах всегда 0
-	LPTSTR cmd,                       // Командная строка
+	LPWSTR cmd,                       // Командная строка
 	int mode)                         // Режим отображения окна
 {
-	Level lnew;
-	lnew.setNullLevel();
-	CurrentGame.Levels.push_back(lnew);
-		
+
+	//initing CurrentLevel!!!!!!!!
+	CurrentGame.loadCurrentLevel();
+	readConfig();
+
 	// Определение класса окна
 	wc.hInstance = This;
 	wc.lpszClassName = WinName;                // Имя класса окна
@@ -33,7 +34,7 @@ int APIENTRY _tWinMain(HINSTANCE This, // Дескриптор текущего приложения
 	if (!RegisterClass(&wc)) return 0;   // Регистрация класса окна
 // Создание окна
 	hWnd = CreateWindow(WinName, // Имя класса окна
-    _T("Каркас Windows-приложения"),  // Заголовок окна
+    L"Каркас Windows-приложения",  // Заголовок окна
 	WS_OVERLAPPEDWINDOW,         // Стиль окна
 	CW_USEDEFAULT, // x
 	CW_USEDEFAULT, // y   Размеры окна
@@ -77,32 +78,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 			EndPaint(hWnd, &ps);
 		break;
 		case WM_KEYDOWN:
-			if(VK_UP & wParam){
+			switch(wParam){
+			case VK_UP:
 				if(CurrentPlatform.moveControl(1))
 				{
 					CurrentPlatform.step(1);
-				}
-			}
-			if(VK_RIGHT & wParam){
+				}			
+			break;
+			case VK_RIGHT:
 				if(CurrentPlatform.moveControl(2))
 				{
 					CurrentPlatform.step(2);
 				}
-			}
-			if(VK_DOWN & wParam){
+			
+			break;
+			case VK_DOWN:
 				if(CurrentPlatform.moveControl(3))
 				{
 					CurrentPlatform.step(3);
 				}
-			}
-			if(VK_LEFT & wParam){
+			
+			break;
+			case VK_LEFT:
 				if(CurrentPlatform.moveControl(4))
 				{
 					CurrentPlatform.step(4);
-				}
-			}
-			if(VK_SPACE & wParam){
+				}			
+			break;
+			case VK_SPACE:
 				CurrentGame.End();
+			break;
 			}
 		break;
 		case WM_DESTROY : PostQuitMessage(0);

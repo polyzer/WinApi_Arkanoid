@@ -6,6 +6,23 @@ extern HWND hWnd;
 extern Platform CurrentPlatform;
 extern HDC hdc;
 
+Game::Game() {
+	this->setStandard();
+	Level *lnew = new Level();// Создаем уровень
+	lnew->setNullLevel();//Задаем ему значение нулевого уровня
+	CurrentGame.Levels.push_back(lnew);
+	lnew = NULL; // стираем уровень переменную.
+	this->CurrentLevelNumber = (this->Levels.size() - 1);
+}
+
+Game::~Game (){
+	// При уничтожении игры мы освобождаем память из под уровней
+	for (int i = 0; i < this->Levels.size(); i++) {
+		delete Levels[i];
+		Levels[i] = NULL;
+	}
+}
+
 void Game::Play() {
 	CurrentBall.timer++; // счетчик проходов для замедления скорости шара
 	if (CurrentBall.timer >= CurrentBall.speed) {
@@ -29,7 +46,8 @@ void Game::Play() {
 }
 
 
-void Game::increasePoints(char c) {
+
+void Game::increasePoints(wchar_t c) {
 	this->points += 100;
 	//Прибавление очков в зависимости от разрушенного блока!
 }
@@ -42,7 +60,7 @@ void Game::render(static int sx, static int sy) { //рисователь
 	cube_size.X = sx / CurrentLevel.Size_Columns;
 	cube_size.Y = sy / CurrentLevel.Size_Strings;
 	MoveToEx(hdc, 0, 0, NULL);
-	setElementColor((char) 32);
+	setElementColor((wchar_t) 32);
 	for (int i=0; i<CurrentLevel.Size_Strings; i++)
 	{
 		for (int j=0; j<CurrentLevel.Size_Columns; j++)
@@ -71,46 +89,48 @@ void Game::render(static int sx, static int sy) { //рисователь
 	}
 	//printInfo();
 }
-bool Game::createLevel(std::string LName) { // Создание/загрузка уровней
-	Level newlevel;
-	newlevel.name = LName;
-	newlevel.number = CurrentGame.Levels.size();
+
+bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
+	Level *newlevel = new Level(); //выделяем память под новый уровень
+	newlevel->name = LName; //заполняем данные
+	newlevel->number = CurrentGame.Levels.size();
 	FILE *level_file;
-	if ((level_file = fopen(newlevel.name.c_str(), "r")) == NULL) {
-		MessageBox(hWnd, (LPCWSTR) newlevel.name.c_str(), 
-		_T("Файл не открывается"), MB_YESNO | MB_ICONQUESTION
+	if ((level_file = _wfopen(newlevel->name, L"r")) == NULL) {
+		MessageBox(hWnd, L"Файл не открывается", 
+		L"Файл не открывается", MB_YESNO | MB_ICONQUESTION
 		);
 	}
-	fscanf(level_file, "%i%i", &newlevel.Size_Columns, &newlevel.Size_Strings);
+	fwscanf(level_file, L"%i%i", &newlevel->Size_Columns, &newlevel->Size_Strings);
 	fseek(level_file, 2, SEEK_CUR);
-	fscanf(level_file, "%c", &newlevel.back);
+	fwscanf(level_file, L"%c", &newlevel->back);
 	fseek(level_file, 2, SEEK_CUR);
-	fscanf(level_file, "%i%i%i", 
-		&newlevel.minSpeedTime, &newlevel.maxSpeedTime, &newlevel.stepNorm
+	fwscanf(level_file, L"%i%i%i", 
+		&newlevel->minSpeedTime, &newlevel->maxSpeedTime, &newlevel->stepNorm
 	);
-	for (int i = 0; i < newlevel.Size_Strings; i++) {
-		for (int j = 0; j < newlevel.Size_Columns; j++) {
-			fscanf(level_file, "%c", &newlevel.Map[i][j]);
+	for (int i = 0; i < newlevel->Size_Strings; i++) {
+		for (int j = 0; j < newlevel->Size_Columns; j++) {
+			fwscanf(level_file, L"%c", &newlevel->Map[i][j]);
 		}
 		fseek(level_file, 2, SEEK_CUR);
 	}
 	fclose(level_file);
 	CurrentGame.Levels.push_back(newlevel);
+	newlevel = NULL; //Обнуляем, чтобы данные не потерялись
 	return true;
 }
 
 bool Game::loadCurrentLevel() { // Создание/загрузка уровней
-	CurrentLevel.name = CurrentGame.Levels[CurrentGame.CurrentLevelNumber].name;
+	CurrentLevel.name = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->name;
 	CurrentLevel.number = CurrentGame.CurrentLevelNumber;
-	CurrentLevel.back = CurrentGame.Levels[CurrentGame.CurrentLevelNumber].back;
-	CurrentLevel.maxSpeedTime = CurrentGame.Levels[CurrentGame.CurrentLevelNumber].maxSpeedTime;
-	CurrentLevel.minSpeedTime = CurrentGame.Levels[CurrentGame.CurrentLevelNumber].minSpeedTime;
-	CurrentLevel.Size_Columns = CurrentGame.Levels[CurrentGame.CurrentLevelNumber].Size_Columns;
-	CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber].Size_Strings;
-	CurrentLevel.reMap(0);
+	CurrentLevel.back = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->back;
+	CurrentLevel.maxSpeedTime = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->maxSpeedTime;
+	CurrentLevel.minSpeedTime = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->minSpeedTime;
+	CurrentLevel.Size_Columns = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Columns;
+	CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
+	CurrentLevel.reMap();
 	for (int i = 0; i < CurrentLevel.Size_Strings; i++) {
 		for (int j = 0; j < CurrentLevel.Size_Columns; j++) {
-			CurrentLevel.Map[i][j] = CurrentGame.Levels[CurrentGame.CurrentLevelNumber].Map[i][j];
+			CurrentLevel.Map[i][j] = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Map[i][j];
 		}
 	}
 	return true;
@@ -130,7 +150,7 @@ bool Game::loadLevelsFromFile()
 			nff = FindNextFile(hff, &datas);
 			if (!nff)
 				break;
-			CurrentGame.createLevel(ws2mb(datas.cFileName));
+			CurrentGame.createLevel(datas.cFileName);
 		}
 	} else 
 		return false;
@@ -139,12 +159,11 @@ bool Game::loadLevelsFromFile()
 }
 
 
-void Game::End() { // перенести функцию в Level.End
-	int i = MessageBox(hWnd, _T("Сохранить игру"), 
-		_T("Сохранение"), MB_YESNO | MB_ICONQUESTION
+void Game::End() {
+	int i = MessageBox(hWnd, L"Сохранить игру", 
+		L"Сохранение", MB_YESNO | MB_ICONQUESTION
 		);
-	i = (i == IDYES)? 1 : 0;
-	if (i == 1) {
+	if (i == IDYES) {
 		CurrentGame.saveStatus = 1;
 	} else {
 		CurrentGame.saveStatus = 0;
