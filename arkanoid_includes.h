@@ -19,4 +19,4 @@ bool createConfig();
 bool saveConfig();
 bool readConfig();
 std::string ws2mb( LPCWSTR src);
-void setElementColor(wchar_t elem);
+void setElementColor(Block block);

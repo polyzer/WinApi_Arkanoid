@@ -42,19 +42,6 @@ public:
 		saveStatus = 0; //0 - new, 1 - load
 		this->CurrentLevelNumber = 0; //устанавливаем значение текущего номера на 0
 		this->CurrentLevelName = L"Default"; // имя стандартного левела
-		RedBlackBrush = CreateSolidBrush(RGB(128, 0, 0));
-		RedLightBrush = CreateSolidBrush(RGB(255, 0, 0));
-		GreenBlackBrush = CreateSolidBrush(RGB(0, 128, 0));
-		GreenLightBrush = CreateSolidBrush(RGB(0, 255, 0));
-		BlueBlackBrush = CreateSolidBrush(RGB(0, 0, 128));
-		BlueLightBrush = CreateSolidBrush(RGB(0, 0, 255));
-		YellowBlackBrush = CreateSolidBrush(RGB(128, 128, 0));
-		YellowLightBrush = CreateSolidBrush(RGB(255, 255, 0));
-		GreyBlackBrush = CreateSolidBrush(RGB(128, 128, 128));
-		GreyLightBrush = CreateSolidBrush(RGB(255, 255, 255));
-		White = CreateSolidBrush(RGB(255, 255, 0));
-		Black = CreateSolidBrush(RGB(255, 255, 0));
-
 
 	}
 	

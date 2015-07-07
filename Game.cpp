@@ -12,6 +12,19 @@ Game::Game() {
 	lnew->setNullLevel();//Задаем ему значение нулевого уровня
 	CurrentGame.Levels.push_back(lnew);
 	lnew = NULL; // стираем уровень переменную.
+	RedBlackBrush = CreateSolidBrush(RGB(128, 0, 0));
+	RedLightBrush = CreateSolidBrush(RGB(255, 0, 0));
+	GreenBlackBrush = CreateSolidBrush(RGB(0, 128, 0));
+	GreenLightBrush = CreateSolidBrush(RGB(0, 255, 0));
+	BlueBlackBrush = CreateSolidBrush(RGB(0, 0, 128));
+	BlueLightBrush = CreateSolidBrush(RGB(0, 0, 255));
+	YellowBlackBrush = CreateSolidBrush(RGB(128, 128, 0));
+	YellowLightBrush = CreateSolidBrush(RGB(255, 255, 0));
+	GreyBlackBrush = CreateSolidBrush(RGB(128, 128, 128));
+	GreyLightBrush = CreateSolidBrush(RGB(255, 255, 255));
+	White = CreateSolidBrush(RGB(255, 255, 0));
+	Black = CreateSolidBrush(RGB(255, 255, 0));
+
 }
 
 Game::~Game (){
@@ -20,6 +33,19 @@ Game::~Game (){
 		delete Levels[i];
 		Levels[i] = NULL;
 	}
+	DeleteObject(RedBlackBrush);
+	DeleteObject(RedLightBrush);
+	DeleteObject(GreenBlackBrush);
+	DeleteObject(GreenLightBrush);
+	DeleteObject(BlueBlackBrush);
+	DeleteObject(BlueLightBrush);
+	DeleteObject(YellowBlackBrush);
+	DeleteObject(YellowLightBrush);
+	DeleteObject(GreyBlackBrush);
+	DeleteObject(GreyLightBrush);
+	DeleteObject(White);
+	DeleteObject(Black);
+
 }
 
 void Game::Play() {
@@ -66,23 +92,23 @@ void Game::render(static int sx, static int sy) { //рисователь
 			if (CurrentPlatform.position.X == j && CurrentPlatform.position.Y == i)
 			{
 				for(int k = 0; k < CurrentPlatform.length; k++){
-					setElementColor(CurrentPlatform.block.element);
-					Rectangle(hdc, (j + k) * cube_size.X, i * cube_size.Y, (j + k + 1) * cube_size.X, (i + 1) * cube_size.Y);
+					SetRect(&CurrentPlatform.block.rect, (j + k) * cube_size.X, i * cube_size.Y, (j + k + 1) * cube_size.X, (i + 1) * cube_size.Y);
+					setElementColor(CurrentPlatform.block);
 				}
 				j += (CurrentPlatform.length - 1); // j
 				continue;
 			}
 			else if (CurrentBall.position.X == j && CurrentBall.position.Y == i) {
-				setElementColor(CurrentBall.block.element);
-				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);				
+				SetRect(&CurrentBall.block.rect, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);				
+				setElementColor(CurrentBall.block);
 				continue;
 			}else if (CurrentLevel.Map[i][j].element != CurrentLevel.back){
-				setElementColor(CurrentLevel.Map[i][j].element);
-				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);								
+				SetRect(&CurrentLevel.Map[i][j].rect, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);								
+				setElementColor(CurrentLevel.Map[i][j]);
 			}
 			else {
-				setElementColor(CurrentLevel.back);
-				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);	
+				SetRect(&CurrentLevel.Map[i][j].rect, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);	
+				setElementColor(CurrentLevel.Map[i][j]);
 			}
 		}
 	}

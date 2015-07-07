@@ -35,14 +35,19 @@ wchar_t config_file_name_ca[] = L"config.cnf"; //файл конфигурации
 HPEN hpen;
 
 
-void setElementColor(wchar_t elem){
-	switch(elem) 
+void setElementColor(Block block){
+	switch(block.element) 
 	{
+		case L'c':
+			hpen = (HPEN) 	GetStockObject(BLACK_PEN);
+			FillRect(hdc, &block.rect, CurrentGame.BlueBlackBrush);
+		break;
 		case L' ':
 			hpen = (HPEN) GetStockObject(NULL_PEN);	
 		break;
 		default:
 			hpen = (HPEN) 	GetStockObject(BLACK_PEN);
+			FillRect(hdc, &block.rect, CurrentGame.GreyBlackBrush);
 		break;
 	}
 	SelectObject(hdc, hpen);
