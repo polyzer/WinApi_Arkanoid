@@ -6,6 +6,7 @@ extern HWND hWnd;
 extern MSG msg;
 extern Platform CurrentPlatform;
 extern HDC hdc;
+extern int worktimer;
 
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
 TCHAR WinName[] = L"MainFrame";
@@ -16,7 +17,7 @@ int APIENTRY wWinMain(HINSTANCE This, // Дескриптор текущего приложения
 {
 
 	//initing CurrentLevel!!!!!!!!
-	CurrentGame.loadCurrentLevel();
+	CurrentGame.loadCurrentLevelByNumber();
 	readConfig();
 
 	// Определение класса окна
@@ -32,7 +33,7 @@ int APIENTRY wWinMain(HINSTANCE This, // Дескриптор текущего приложения
 	// Заполнение окна белым цветом
 	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW+1);
 	if (!RegisterClass(&wc)) return 0;   // Регистрация класса окна
-// Создание окна
+	// Создание окна
 	hWnd = CreateWindow(WinName, // Имя класса окна
     L"Каркас Windows-приложения",  // Заголовок окна
 	WS_OVERLAPPEDWINDOW,         // Стиль окна
@@ -45,7 +46,7 @@ int APIENTRY wWinMain(HINSTANCE This, // Дескриптор текущего приложения
 	This,         // Дескриптор приложения
 	NULL);        // Дополнительной информации нет
 	ShowWindow(hWnd, mode); // Показать окно
-// Цикл обработки сообщений
+	// Цикл обработки сообщений
 	while(GetMessage(&msg, NULL, 0, 0))
 	{
 	TranslateMessage(&msg); // Функция трансляции кодов нажатой клавиши
@@ -63,7 +64,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 	switch(message)
 	{
 		case WM_CREATE:
-			SetTimer(hWnd, 1, CurrentGame.FPS, NULL);
+			SetTimer(hWnd, worktimer, CurrentGame.FPS, NULL);
 		break;
 		case WM_SIZE:
 			sx = LOWORD(lParam);
@@ -72,7 +73,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 		case WM_TIMER:
 			CurrentGame.Play();
 		break;
-		case WM_PAINT:
+		case WM_PAINT: 
+			//костылек... не ясно почему затирается значение размера карты по строкам
+			CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
 			hdc = BeginPaint(hWnd, &ps);
 			CurrentGame.render(sx, sy);
 			EndPaint(hWnd, &ps);
@@ -110,8 +113,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 			break;
 			}
 		break;
-		case WM_DESTROY : PostQuitMessage(0);
-			          break; // Завершение программы
+		case WM_DESTROY : 
+			PostQuitMessage(0);
+		break; // Завершение программы
 		// Обработка сообщения по умолчанию
 		default : return DefWindowProc(hWnd, message, wParam, lParam);
 	}

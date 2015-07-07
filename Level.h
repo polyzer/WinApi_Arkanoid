@@ -1,4 +1,5 @@
 #pragma once
+#include "Block.h"
 
 class Level {
 public:
@@ -8,7 +9,7 @@ public:
     LPCWSTR name;
 	bool init;
 	wchar_t back; // background
-	wchar_t **Map; // карта уровня
+	Block **Map; // карта уровня
 	int minSpeedTime; //начальная скорость шара на уровне
 	int maxSpeedTime; //максимальная скорость шара на уровне
 	int stepNorm; // количество шагов шара для изменения скорости
@@ -23,7 +24,7 @@ public:
 		this->minSpeedTime = 30;
 		this->maxSpeedTime = 7;
 		this->stepNorm = 5;
-		this->name = L"Auto";
+		this->name = L"Default";
 		this->init = 1;
 	}
 	void setNullLevel();

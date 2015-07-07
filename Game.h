@@ -12,7 +12,20 @@ public:
 	wchar_t pauseSymbol; // символ паузы!
 	int saveStatus; // статус сохранения: 0 - новая игра, 1 - загрузка
 	int FPS; //количество кадров
-	std::vector <Level*> Levels; // Указатели на уровни...
+	std::vector <Level*> Levels; // Указатели на уровни
+	HBRUSH RedBlackBrush;
+	HBRUSH RedLightBrush;
+	HBRUSH GreenBlackBrush;
+	HBRUSH GreenLightBrush;
+	HBRUSH BlueBlackBrush;
+	HBRUSH BlueLightBrush;
+	HBRUSH YellowBlackBrush;
+	HBRUSH YellowLightBrush;
+	HBRUSH GreyBlackBrush;
+	HBRUSH GreyLightBrush;
+	HBRUSH White;
+	HBRUSH Black;
+
 	int CurrentLevelNumber;
 	LPCWSTR CurrentLevelName;
 	Game();
@@ -22,15 +35,31 @@ public:
 		minSpeed = 1000;
 		maxSpeed = 50;
 		stopSymbol = 113; //символ оканчивающий игру
-		pauseSymbol = 32;
-		lifes = 3;
-		points = 0;
+		pauseSymbol = 32; // 
+		lifes = 3; //количество жизней
+		points = 0; //начальные очки
 		speed = minSpeed; //стартовая скорость
 		saveStatus = 0; //0 - new, 1 - load
+		this->CurrentLevelNumber = 0; //устанавливаем значение текущего номера на 0
+		this->CurrentLevelName = L"Default"; // имя стандартного левела
+		RedBlackBrush = CreateSolidBrush(RGB(128, 0, 0));
+		RedLightBrush = CreateSolidBrush(RGB(255, 0, 0));
+		GreenBlackBrush = CreateSolidBrush(RGB(0, 128, 0));
+		GreenLightBrush = CreateSolidBrush(RGB(0, 255, 0));
+		BlueBlackBrush = CreateSolidBrush(RGB(0, 0, 128));
+		BlueLightBrush = CreateSolidBrush(RGB(0, 0, 255));
+		YellowBlackBrush = CreateSolidBrush(RGB(128, 128, 0));
+		YellowLightBrush = CreateSolidBrush(RGB(255, 255, 0));
+		GreyBlackBrush = CreateSolidBrush(RGB(128, 128, 128));
+		GreyLightBrush = CreateSolidBrush(RGB(255, 255, 255));
+		White = CreateSolidBrush(RGB(255, 255, 0));
+		Black = CreateSolidBrush(RGB(255, 255, 0));
+
+
 	}
 	
 	bool loadLevelsFromFile();
-	bool loadCurrentLevel();
+	bool loadCurrentLevelByNumber();
 	bool createLevel(LPCWSTR LName); //загружает уровень в зависимости от имени
 	void increasePoints(wchar_t c); // увеличивает очки в зависимости от элемента
 	void speedUp(int spd); // изменяет скорость

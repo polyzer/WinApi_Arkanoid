@@ -13,6 +13,7 @@
 #include "Ball.h"
 #include "Platform.h"
 #include "Menu.h"
+#include "Block.h"
 
 bool createConfig();
 bool saveConfig();

@@ -12,7 +12,6 @@ Game::Game() {
 	lnew->setNullLevel();//«адаем ему значение нулевого уровн€
 	CurrentGame.Levels.push_back(lnew);
 	lnew = NULL; // стираем уровень переменную.
-	this->CurrentLevelNumber = (this->Levels.size() - 1);
 }
 
 Game::~Game (){
@@ -30,7 +29,7 @@ void Game::Play() {
 		CurrentBall.collision();
 		CurrentBall.collision();
 		if(CurrentBall.collision()){
-		CurrentBall.step(); // если достаточно раз прошел - шаг шара
+			CurrentBall.step(); // если достаточно раз прошел - шаг шара
 		}
 		CurrentBall.timer = 0;
 		CurrentBall.stepNum++;
@@ -52,7 +51,7 @@ void Game::increasePoints(wchar_t c) {
 	//ѕрибавление очков в зависимости от разрушенного блока!
 }
 void Game::destroyBlock(int y, int x) {
-	CurrentLevel.Map[y][x] = CurrentLevel.back;
+	CurrentLevel.Map[y][x].element = CurrentLevel.back;
 }
 
 void Game::render(static int sx, static int sy) { //рисователь
@@ -60,25 +59,25 @@ void Game::render(static int sx, static int sy) { //рисователь
 	cube_size.X = sx / CurrentLevel.Size_Columns;
 	cube_size.Y = sy / CurrentLevel.Size_Strings;
 	MoveToEx(hdc, 0, 0, NULL);
-	setElementColor((wchar_t) 32);
 	for (int i=0; i<CurrentLevel.Size_Strings; i++)
 	{
 		for (int j=0; j<CurrentLevel.Size_Columns; j++)
 		{
 			if (CurrentPlatform.position.X == j && CurrentPlatform.position.Y == i)
 			{
-				for(int k = 0; k < CurrentPlatform.length; k++)
-					setElementColor(CurrentPlatform.symbol);
-				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);
+				for(int k = 0; k < CurrentPlatform.length; k++){
+					setElementColor(CurrentPlatform.block.element);
+					Rectangle(hdc, (j + k) * cube_size.X, i * cube_size.Y, (j + k + 1) * cube_size.X, (i + 1) * cube_size.Y);
+				}
 				j += (CurrentPlatform.length - 1); // j
 				continue;
 			}
 			else if (CurrentBall.position.X == j && CurrentBall.position.Y == i) {
-				setElementColor(CurrentBall.symbol);
+				setElementColor(CurrentBall.block.element);
 				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);				
 				continue;
-			}else if (CurrentLevel.Map[i][j] != CurrentLevel.back){
-				setElementColor(CurrentLevel.Map[i][j]);
+			}else if (CurrentLevel.Map[i][j].element != CurrentLevel.back){
+				setElementColor(CurrentLevel.Map[i][j].element);
 				Rectangle(hdc, j * cube_size.X, i * cube_size.Y, (j + 1) * cube_size.X, (i + 1) * cube_size.Y);								
 			}
 			else {
@@ -109,7 +108,7 @@ bool Game::createLevel(LPCWSTR LName) { // —оздание/загрузка уровней
 	);
 	for (int i = 0; i < newlevel->Size_Strings; i++) {
 		for (int j = 0; j < newlevel->Size_Columns; j++) {
-			fwscanf(level_file, L"%c", &newlevel->Map[i][j]);
+			fwscanf(level_file, L"%c", &newlevel->Map[i][j].element);
 		}
 		fseek(level_file, 2, SEEK_CUR);
 	}
@@ -119,7 +118,8 @@ bool Game::createLevel(LPCWSTR LName) { // —оздание/загрузка уровней
 	return true;
 }
 
-bool Game::loadCurrentLevel() { // —оздание/загрузка уровней
+bool Game::loadCurrentLevelByNumber() { // —оздание/загрузка уровней
+	//CurrentGame.CurrentLevelNumber = 0;
 	CurrentLevel.name = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->name;
 	CurrentLevel.number = CurrentGame.CurrentLevelNumber;
 	CurrentLevel.back = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->back;
@@ -130,7 +130,7 @@ bool Game::loadCurrentLevel() { // —оздание/загрузка уровней
 	CurrentLevel.reMap();
 	for (int i = 0; i < CurrentLevel.Size_Strings; i++) {
 		for (int j = 0; j < CurrentLevel.Size_Columns; j++) {
-			CurrentLevel.Map[i][j] = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Map[i][j];
+			CurrentLevel.Map[i][j].element = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Map[i][j].element;
 		}
 	}
 	return true;
