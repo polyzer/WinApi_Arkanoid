@@ -121,7 +121,7 @@ bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
 	newlevel->name = LName; //заполняем данные
 	newlevel->number = CurrentGame.Levels.size();
 	FILE *level_file;
-	if ((level_file = _wfopen(newlevel->name, L"r")) == NULL) {
+	if ((level_file = _wfopen(newlevel->name.c_str(), L"r")) == NULL) {
 		MessageBox(hWnd, L"Файл не открывается", 
 		L"Файл не открывается", MB_YESNO | MB_ICONQUESTION
 		);

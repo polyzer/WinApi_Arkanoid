@@ -74,9 +74,14 @@ bool createConfig() //создание файла концигурации
 
 bool saveConfig() // сохранение концигурации при выходе
 {
+
 	FILE *file_Fp;
 	if ((file_Fp = _wfopen(config_file_name_ca, L"w")) != NULL)
 	{
+		MessageBox(hWnd, CurrentGame.CurrentLevelName.c_str(), 
+		L"Игра", MB_OK | MB_ICONQUESTION
+		);
+		fwprintf(file_Fp, L"%s\n", CurrentGame.CurrentLevelName.c_str());
 		fwprintf(file_Fp, L"%i \n", CurrentGame.lifes);
 		fwprintf(file_Fp, L"%i \n", CurrentGame.points);
 		fwprintf(file_Fp, L"%i \n", CurrentBall.speed);
@@ -85,7 +90,6 @@ bool saveConfig() // сохранение концигурации при выходе
 		fwprintf(file_Fp, L"%i %i \n", CurrentBall.position.X, CurrentBall.position.Y);
 		fwprintf(file_Fp, L"%i %i \n", CurrentBall.course.X, CurrentBall.course.Y);
 		fwprintf(file_Fp, L"%i %i \n", CurrentPlatform.position.X, CurrentPlatform.position.Y);
-		fwprintf(file_Fp, L"%s\n", CurrentLevel.name);
 		fwprintf(file_Fp, L"%i \n", CurrentGame.saveStatus);
 		for (int i = 0; i < CurrentLevel.Size_Strings; i++)
 		{
@@ -98,9 +102,6 @@ bool saveConfig() // сохранение концигурации при выходе
 		fclose(file_Fp);
 		return true;
 	} else {
-
-		system("cls");
-		printf("Не удается записать конфигурационные данные!!!");
 		fclose(file_Fp);
 		return false;
 	}
@@ -112,6 +113,7 @@ bool readConfig() // чтение и загрузка конфигурации
 	if ((file_Fp = _wfopen(config_file_name_ca, L"r")) != NULL)
 	{
 		//Считывание!!!
+		fwscanf(file_Fp, L"%s", CurrentGame.CurrentLevelName);
 		fwscanf(file_Fp, L"%i", &CurrentGame.lifes);
 		fwscanf(file_Fp, L"%i", &CurrentGame.points);
 		fwscanf(file_Fp, L"%i", &CurrentBall.speed);
@@ -120,8 +122,7 @@ bool readConfig() // чтение и загрузка конфигурации
 		fwscanf(file_Fp, L"%i %i", &CurrentBall.position.X, &CurrentBall.position.Y);
 		fwscanf(file_Fp, L"%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
 		fwscanf(file_Fp, L"%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
-		fseek(file_Fp, 2, SEEK_CUR);
-		fwscanf(file_Fp, L"%s", CurrentGame.CurrentLevelName);
+//		fseek(file_Fp, 2, SEEK_CUR);
 		fwscanf(file_Fp, L"%i", &CurrentGame.saveStatus);
 		fseek(file_Fp, 3, SEEK_CUR);
 		// Костыль!!!!!
@@ -144,6 +145,7 @@ bool readConfig() // чтение и загрузка конфигурации
 			if ((file_Fp = _wfopen(config_file_name_ca, L"r")) != NULL)
 			{
 				// считывание!!!
+				fwscanf(file_Fp, L"%s", CurrentGame.CurrentLevelName);
 				fwscanf(file_Fp, L"%i", &CurrentGame.lifes);
 				fwscanf(file_Fp, L"%i", &CurrentGame.points);
 				fwscanf(file_Fp, L"%i", &CurrentBall.speed);
@@ -152,9 +154,9 @@ bool readConfig() // чтение и загрузка конфигурации
 				fwscanf(file_Fp, L"%i %i", &CurrentBall.position.X, &CurrentBall.position.Y);
 				fwscanf(file_Fp, L"%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
 				fwscanf(file_Fp, L"%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
-				fseek(file_Fp, 2, SEEK_CUR);
-				fwscanf(file_Fp, L"%s", CurrentGame.CurrentLevelName);
+//				fseek(file_Fp, 2, SEEK_CUR);
 				fwscanf(file_Fp, L"%i", &CurrentGame.saveStatus);
+				fseek(file_Fp, 3, SEEK_CUR);
 				// Костыль!!!!!
 				CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
 				if (CurrentGame.saveStatus == 1) {

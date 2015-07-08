@@ -6,7 +6,7 @@ public:
 	int Size_Strings;// размер по Y
 	int Size_Columns;//размер по X
 	int number; // номер уровня
-    LPCWSTR name;
+    std::wstring name;
 	bool init;
 	wchar_t back; // background
 	Block **Map; // карта уровня
