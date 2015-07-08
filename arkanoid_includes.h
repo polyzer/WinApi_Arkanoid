@@ -7,6 +7,8 @@
 #endif
 #include <Windows.h>
 #include <cstdio>
+#include <iostream>
+#include <fstream>
 #include <vector>
 #include "Game.h"
 #include "Level.h"
