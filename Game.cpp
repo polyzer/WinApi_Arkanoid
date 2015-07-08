@@ -78,6 +78,7 @@ void Game::increasePoints(wchar_t c) {
 }
 void Game::destroyBlock(int y, int x) {
 	CurrentLevel.Map[y][x].element = CurrentLevel.back;
+
 }
 
 void Game::render(static int sx, static int sy) { //рисователь
@@ -145,7 +146,6 @@ bool Game::createLevel(LPCWSTR LName) { // Создание/загрузка уровней
 }
 
 bool Game::loadCurrentLevelByNumber() { // Создание/загрузка уровней
-	//CurrentGame.CurrentLevelNumber = 0;
 	CurrentLevel.name = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->name;
 	CurrentLevel.number = CurrentGame.CurrentLevelNumber;
 	CurrentLevel.back = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->back;

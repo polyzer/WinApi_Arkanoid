@@ -18,6 +18,7 @@ int APIENTRY wWinMain(HINSTANCE This, // Дескриптор текущего приложения
 
 	//initing CurrentLevel!!!!!!!!
 	CurrentGame.loadCurrentLevelByNumber();
+	//Здесь затирается значение CurrentLevelNumber.Size_Strings, пишем вручную
 	readConfig();
 
 	// Определение класса окна
@@ -75,7 +76,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 		break;
 		case WM_PAINT: 
 			//костылек... не ясно почему затирается значение размера карты по строкам
-			CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
+//			CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
 			hdc = BeginPaint(hWnd, &ps);
 			CurrentGame.render(sx, sy);
 			EndPaint(hWnd, &ps);

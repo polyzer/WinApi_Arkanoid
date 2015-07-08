@@ -85,7 +85,7 @@ bool saveConfig() // сохранение концигурации при выходе
 		fwprintf(file_Fp, L"%i %i \n", CurrentBall.position.X, CurrentBall.position.Y);
 		fwprintf(file_Fp, L"%i %i \n", CurrentBall.course.X, CurrentBall.course.Y);
 		fwprintf(file_Fp, L"%i %i \n", CurrentPlatform.position.X, CurrentPlatform.position.Y);
-		fwprintf(file_Fp, L"%s \n", CurrentLevel.name);
+		fwprintf(file_Fp, L"%s\n", CurrentLevel.name);
 		fwprintf(file_Fp, L"%i \n", CurrentGame.saveStatus);
 		for (int i = 0; i < CurrentLevel.Size_Strings; i++)
 		{
@@ -121,9 +121,11 @@ bool readConfig() // чтение и загрузка конфигурации
 		fwscanf(file_Fp, L"%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
 		fwscanf(file_Fp, L"%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
 		fseek(file_Fp, 2, SEEK_CUR);
-		fwscanf(file_Fp, L"%s", &CurrentGame.CurrentLevelName);
+		fwscanf(file_Fp, L"%s", CurrentGame.CurrentLevelName);
 		fwscanf(file_Fp, L"%i", &CurrentGame.saveStatus);
 		fseek(file_Fp, 3, SEEK_CUR);
+		// Костыль!!!!!
+		CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
 		if (CurrentGame.saveStatus == 1) {
 			for (int i = 0; i < CurrentLevel.Size_Strings; i++) {
 				for (int j = 0; j < CurrentLevel.Size_Columns; j++) {
@@ -151,8 +153,10 @@ bool readConfig() // чтение и загрузка конфигурации
 				fwscanf(file_Fp, L"%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
 				fwscanf(file_Fp, L"%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
 				fseek(file_Fp, 2, SEEK_CUR);
-				fwscanf(file_Fp, L"%s", &CurrentGame.CurrentLevelName);
+				fwscanf(file_Fp, L"%s", CurrentGame.CurrentLevelName);
 				fwscanf(file_Fp, L"%i", &CurrentGame.saveStatus);
+				// Костыль!!!!!
+				CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
 				if (CurrentGame.saveStatus == 1) {
 					for (int i = 0; i < CurrentLevel.Size_Strings; i++) {
 						for (int j = 0; j < CurrentLevel.Size_Columns; j++) {

@@ -27,7 +27,7 @@ public:
 	HBRUSH Black;
 
 	int CurrentLevelNumber;
-	LPCWSTR CurrentLevelName;
+	std::wstring CurrentLevelName;
 	Game();
 	~Game();
 	void setStandard() { // устанавливает начальные значения
