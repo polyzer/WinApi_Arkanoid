@@ -4,15 +4,9 @@
 extern Platform CurrentPlatform;
 
 bool Ball::screenOut(){
-/*	if ((this->position.X <= 0) && (this->course.X < 0)) {
-		return true;
-	}*/
 	if ((this->position.Y <= 0)) {
 		return true;
 	}
-//	if (this->position.X >= (CurrentLevel.Size_Columns - 1)) {
-//		return true;
-//	}
 	return false;
 }
 
@@ -137,32 +131,28 @@ bool Ball::collision() {
 		if ((CurrentLevel.Map[this->position.Y - 1][this->position.X].element !=
 			 CurrentLevel.back) &&
 			 (this->course.Y < 0)) {
-			CurrentGame.points += 100; // очки за столкновение
-			CurrentLevel.Map[this->position.Y - 1][this->position.X].element = CurrentLevel.back;
+			CurrentLevel.destroyBlock(this->position.Y - 1, this->position.X);
 			this->course.Y = -(this->course.Y);
 			i++;
 		}
 	if ((CurrentLevel.Map[this->position.Y][this->position.X + 1].element !=
          CurrentLevel.back) &&
          (this->course.X > 0)) {
-		CurrentGame.points += 100; // очки за столкновение
-		CurrentLevel.Map[this->position.Y][this->position.X + 1].element = CurrentLevel.back;
+		CurrentLevel.destroyBlock(this->position.Y, this->position.X + 1);
 		this->course.X = -(this->course.X);
 		i++;
 	}
 	if ((CurrentLevel.Map[this->position.Y + 1][this->position.X].element !=
          CurrentLevel.back) &&
          (this->course.Y > 0)) {
-		CurrentGame.points += 100; // очки за столкновение
-		CurrentLevel.Map[this->position.Y + 1][this->position.X].element = CurrentLevel.back;
+  		CurrentLevel.destroyBlock(this->position.Y + 1, this->position.X);
 		this->course.Y = -(this->course.Y);
 		i++;
 	}
 	if ((CurrentLevel.Map[this->position.Y][this->position.X - 1].element) !=
          CurrentLevel.back &&
          (this->course.X < 0)) {
-		CurrentGame.points += 100; // очки за столкновение
-		CurrentLevel.Map[this->position.Y][this->position.X - 1].element = CurrentLevel.back;
+  		CurrentLevel.destroyBlock(this->position.Y, this->position.X - 1);
 		this->course.X = -(this->course.X);
 		i++;
 	}
@@ -171,31 +161,27 @@ bool Ball::collision() {
 		if (CurrentLevel.Map[this->position.Y + 1][this->position.X + 1].element != CurrentLevel.back &&
 			(this->course.X > 0) && (this->course.Y > 0) // если блок правее по горизонтали и ниже вертикали и шар идет вправо + вниз
 		) {
-			CurrentGame.points += 100;// очки за столкновение
-			CurrentLevel.Map[this->position.Y + 1][this->position.X + 1].element = CurrentLevel.back;
+    		CurrentLevel.destroyBlock(this->position.Y + 1, this->position.X + 1);
 			i++;
 		}
 		if ((this->position.Y - 1) >= 0)
 			if (CurrentLevel.Map[this->position.Y - 1][this->position.X + 1].element != CurrentLevel.back &&
 				(this->course.X > 0) && (this->course.Y < 0) // если блок правее по горизонтали и выше вертикали и шар идет вправо + вверх
 			) {
-				CurrentGame.points += 100;// очки за столкновение
-				CurrentLevel.Map[this->position.Y - 1][this->position.X + 1].element = CurrentLevel.back;
+         		CurrentLevel.destroyBlock(this->position.Y - 1, this->position.X + 1);
 				i++;
 			}
 		if ((this->position.Y - 1) >= 0)
 			if (CurrentLevel.Map[this->position.Y - 1][this->position.X - 1].element != CurrentLevel.back &&
 				(this->course.X < 0) && (this->course.Y < 0) // если блок левее по горизонтали и ниже вертикали и шар идет влево + вниз
 			) {
-				CurrentGame.points += 100;// очки за столкновение
-				CurrentLevel.Map[this->position.Y - 1][this->position.X - 1].element = CurrentLevel.back;
+         		CurrentLevel.destroyBlock(this->position.Y - 1, this->position.X - 1);
 				i++;
 			}
 		if (CurrentLevel.Map[this->position.Y + 1][this->position.X - 1].element != CurrentLevel.back &&
 			(this->course.X < 0) && (this->course.Y > 0) // если блок левее по горизонтали и выше вертикали и шар идет влево + вверх
 		) {
-			CurrentGame.points += 100; // очки за столкновение
-			CurrentLevel.Map[this->position.Y + 1][this->position.X - 1].element = CurrentLevel.back;
+         	CurrentLevel.destroyBlock(this->position.Y + 1, this->position.X - 1);
 			i++;
 		}
 		if (i != 0) {
@@ -225,15 +211,19 @@ void Ball::step(){
 void Ball::setStandard() {//установка начального положения мяча
 		this->course.X = 1; // 1 - вправо, -1 - влево
 		this->course.Y = -1;// 1 - вниз, -1 - вверх
-		this->position.X = (CurrentLevel.Size_Columns/2);
-		this->position.Y = (CurrentLevel.Size_Strings/2);
-		this->block.element = 4;
-		this->speed = CurrentLevel.minSpeedTime;
+		this->setStandardPosition();
+		this->block.element = L'B';
+		this->speed = 30;
 		this->timer = 0;
 		this->stepNum = 0;
 	}
 ////////////
 
+
+void Ball::setStandardPosition() {
+		this->position.X = (int) (CurrentLevel.Size_Columns/2);
+		this->position.Y = (int) (CurrentLevel.Size_Strings/2);
+}
 void Ball::speedUp(int spd) {
 	if (this->speed >= CurrentLevel.maxSpeedTime)
 		this->speed -= spd;
@@ -247,4 +237,17 @@ bool Level::allBlocksDestroyed() {
 		}
 	}
 	return true;
+}
+
+void Ball::genCourse(){
+	srand(clock());
+	
+	if((rand()%1) == 1)
+		this->course.X = 1;
+	else
+		this->course.X = -1;
+	if((rand()%1) == 1)
+		this->course.Y = 1;
+	else
+		this->course.Y = -1;
 }

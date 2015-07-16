@@ -5,7 +5,7 @@ extern Game CurrentGame;
 extern HWND hWnd;
 extern Ball CurrentBall;
 extern Platform CurrentPlatform;
-extern int worktimer;
+extern int GamePlayTimer;
 
 Level::Level() 
 {
@@ -21,7 +21,7 @@ Level::~Level() {
 }
 
 void Level::End(bool status) {
-	KillTimer(hWnd, worktimer);
+	KillTimer(hWnd, GamePlayTimer);
 	if (status == true) {
 		if (CurrentGame.CurrentLevelNumber == (CurrentGame.Levels.size() - 1)){
 			MessageBox(hWnd, L"Вы прошли все доступные уровни! Поехали сначала...", 
@@ -31,13 +31,13 @@ void Level::End(bool status) {
 		} else {
 			CurrentGame.CurrentLevelNumber++;			
 		}
-		CurrentGame.loadCurrentLevelByNumber();
 		CurrentGame.setStandard();
 		CurrentPlatform.setStandard();
 		CurrentBall.setStandard();
+		CurrentGame.loadCurrentLevelByNumber();
 		CurrentGame.saveStatus = 1;
-		SetTimer(hWnd, worktimer, CurrentGame.FPS, NULL);
 		saveConfig();
+		SetTimer(hWnd, GamePlayTimer, CurrentGame.FPS, NULL);
 	} else {
 		int i = MessageBox(hWnd, L"Начать заново", 
 		L"Проигрыш", MB_YESNO | MB_ICONQUESTION
@@ -47,7 +47,7 @@ void Level::End(bool status) {
 			CurrentGame.setStandard();
 			CurrentPlatform.setStandard();
 			CurrentBall.setStandard();
-			SetTimer(hWnd, worktimer, CurrentGame.FPS, NULL);
+			SetTimer(hWnd, GamePlayTimer, CurrentGame.FPS, NULL);
 		} else {
 			CurrentGame.End();
 		}
@@ -84,4 +84,31 @@ void Level::setNullLevel()// устанавливает нулевой уровень
 	CurrentBall.setStandard();
 	CurrentGame.setStandard();
 	CurrentPlatform.setStandard();
+}
+void Level::destroyBlock(int y, int x) {
+	switch(this->Map[y][x].element){
+		case L'c':
+			this->Map[y][x].element = this->back;			
+		break;
+		case L'C':
+			this->Map[y][x].element = L'c';			
+		break;
+		case L'g':
+			this->Map[y][x].element = this->back;			
+		break;
+		case L'G':
+			this->Map[y][x].element = L'g';			
+		break;
+		case L'r':
+			this->Map[y][x].element = this->back;			
+		break;
+		case L'R':
+			this->Map[y][x].element = L'r';			
+		break;
+		default:
+			this->Map[y][x].element = this->back;
+
+	}
+	
+	
 }

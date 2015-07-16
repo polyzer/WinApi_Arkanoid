@@ -7,9 +7,11 @@
 #endif
 #include <Windows.h>
 #include <cstdio>
+#include <ctime>
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <ctime>
 #include "Game.h"
 #include "Level.h"
 #include "Ball.h"

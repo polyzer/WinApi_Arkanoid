@@ -23,11 +23,13 @@ public:
 	HBRUSH YellowLightBrush;
 	HBRUSH GreyBlackBrush;
 	HBRUSH GreyLightBrush;
+	HBRUSH PlatformBrush;
 	HBRUSH White;
 	HBRUSH Black;
 
 	int CurrentLevelNumber;
 	std::wstring CurrentLevelName;
+	std::wstring lastLevelName;
 	Game();
 	~Game();
 	void setStandard() { // устанавливает начальные значения
@@ -40,11 +42,10 @@ public:
 		points = 0; //начальные очки
 		speed = minSpeed; //стартовая скорость
 		saveStatus = 0; //0 - new, 1 - load
-		this->CurrentLevelNumber = 0; //устанавливаем значение текущего номера на 0
-		this->CurrentLevelName = L"Default"; // имя стандартного левела
-
 	}
-	
+	bool CurrentLeveNumberControl(int num);
+	void Menu();
+	void printMenu(int sx, int sy);
 	bool loadLevelsFromFile();
 	bool loadCurrentLevelByNumber();
 	bool createLevel(LPCWSTR LName); //загружает уровень в зависимости от имени
@@ -52,8 +53,8 @@ public:
 	void speedUp(int spd); // изменяет скорость
 	void setLifes(); //изменяет количество попыток
 	void render(int sx, int sy); //рисует все
-	void destroyBlock(int y, int x); // обработка уничтожения блоков
 	void printInfo();
 	void Play(); // Начало игры
 	void End(); //Конец уровня!
+	void Game::Shooting();
 };

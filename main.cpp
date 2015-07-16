@@ -6,7 +6,10 @@ extern HWND hWnd;
 extern MSG msg;
 extern Platform CurrentPlatform;
 extern HDC hdc;
-extern int worktimer;
+extern int GamePlayTimer; //Таймер, который вызывает главную функцию игры.
+//extern int ShowMenuTimer; не используется
+extern bool showMode;
+extern bool Pause;
 
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM) ;
 TCHAR WinName[] = L"MainFrame";
@@ -15,12 +18,12 @@ int APIENTRY wWinMain(HINSTANCE This, // Дескриптор текущего приложения
 	LPWSTR cmd,                       // Командная строка
 	int mode)                         // Режим отображения окна
 {
-
+	srand(clock());
 	//initing CurrentLevel!!!!!!!!
-	CurrentGame.loadCurrentLevelByNumber();
-	//Здесь затирается значение CurrentLevelNumber.Size_Strings, пишем вручную
+	CurrentGame.loadCurrentLevelByNumber(); // Загружаем стандартный уровень в текущий
+	CurrentGame.loadLevelsFromFile(); // Грузим другие уровни из файлов
 	readConfig();
-
+	CurrentGame.CurrentLevelNumber = CurrentLevel.number; //устанавливаем последний номер из конфига!
 	// Определение класса окна
 	wc.hInstance = This;
 	wc.lpszClassName = WinName;                // Имя класса окна
@@ -61,57 +64,91 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 	          WPARAM wParam, LPARAM lParam)
 {       // Обработчик сообщений
 	PAINTSTRUCT ps;
-	static int sx, sy;
+	static int sx = 0, //размер горизонтали
+			   sy = 0; //размер окна по вертикали
 	switch(message)
 	{
 		case WM_CREATE:
-			SetTimer(hWnd, worktimer, CurrentGame.FPS, NULL);
+			SetTimer(hWnd, GamePlayTimer, CurrentGame.FPS, NULL);
 		break;
 		case WM_SIZE:
 			sx = LOWORD(lParam);
 			sy = HIWORD(lParam);
 		break;
 		case WM_TIMER:
-			CurrentGame.Play();
+			if(showMode)
+				CurrentGame.Play();
+			else
+				CurrentGame.Menu();
 		break;
 		case WM_PAINT: 
 			//костылек... не ясно почему затирается значение размера карты по строкам
 //			CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
 			hdc = BeginPaint(hWnd, &ps);
-			CurrentGame.render(sx, sy);
+			if (showMode)
+				CurrentGame.render(sx, sy);
+			else
+				CurrentGame.printMenu(sx, sy);
 			EndPaint(hWnd, &ps);
 		break;
 		case WM_KEYDOWN:
-			switch(wParam){
-			case VK_UP:
-				if(CurrentPlatform.moveControl(1))
-				{
-					CurrentPlatform.step(1);
-				}			
-			break;
-			case VK_RIGHT:
-				if(CurrentPlatform.moveControl(2))
-				{
-					CurrentPlatform.step(2);
-				}
+			if (showMode) {
+				switch(wParam){
+					case VK_UP:
+						if(CurrentPlatform.moveControl(1))
+						{
+							CurrentPlatform.step(1);
+						}			
+					break;
+					case VK_RIGHT:
+						if(CurrentPlatform.moveControl(2))
+						{
+							CurrentPlatform.step(2);
+						}
 			
-			break;
-			case VK_DOWN:
-				if(CurrentPlatform.moveControl(3))
-				{
-					CurrentPlatform.step(3);
-				}
+					break;
+					case VK_DOWN:
+						if(CurrentPlatform.moveControl(3))
+						{
+							CurrentPlatform.step(3);
+						}
 			
-			break;
-			case VK_LEFT:
-				if(CurrentPlatform.moveControl(4))
-				{
-					CurrentPlatform.step(4);
-				}			
-			break;
-			case VK_SPACE:
-				CurrentGame.End();
-			break;
+					break;
+					case VK_LEFT:
+						if(CurrentPlatform.moveControl(4))
+						{
+							CurrentPlatform.step(4);
+						}			
+					break;
+					case VK_RETURN:
+						CurrentGame.End();
+					break;
+					case VK_SPACE:
+						Pause = !Pause;
+						if (Pause == 1){
+							KillTimer(hWnd, GamePlayTimer);
+						} else {
+							SetTimer(hWnd, GamePlayTimer, CurrentGame.FPS, NULL);
+						}
+					break;
+					}
+			} else {
+				switch(wParam) {
+				case VK_UP:
+					if (CurrentGame.CurrentLeveNumberControl(CurrentGame.CurrentLevelNumber - 1)) {
+						CurrentGame.CurrentLevelNumber--;
+					}
+				break;
+				case VK_DOWN:
+					if (CurrentGame.CurrentLeveNumberControl(CurrentGame.CurrentLevelNumber + 1)) {
+						CurrentGame.CurrentLevelNumber++;
+					}
+				break;
+				case VK_RETURN:
+					CurrentGame.loadCurrentLevelByNumber();
+					showMode = true;
+				break;
+				}
 			}
 		break;
 		case WM_DESTROY : 
