@@ -23,7 +23,7 @@ public:
 		//system("pause");
 		this->back = L' ';
 		this->minSpeedTime = 30;
-		this->maxSpeedTime = 5;
+		this->maxSpeedTime = 7;
 		this->stepNorm = 5;
 		this->name = L"Default";
 		this->init = 1;

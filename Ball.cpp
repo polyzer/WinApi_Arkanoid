@@ -127,7 +127,7 @@ bool Ball::collision() {
 	// КОНЕЦ обработки столкновений с платформой
 	//Столкновение с блоками
 	int i = 0; //счетчик столкновений
-	if (!(this->position.Y - 1 < 0)) // проверка верхнего положения, чтобы не уйти за границу массива (-1).
+	if (this->position.Y - 1 >= 0) // проверка верхнего положения, чтобы не уйти за границу массива (-1).
 		if ((CurrentLevel.Map[this->position.Y - 1][this->position.X].element !=
 			 CurrentLevel.back) &&
 			 (this->course.Y < 0)) {
@@ -136,8 +136,8 @@ bool Ball::collision() {
 			i++;
 		}
 	if ((CurrentLevel.Map[this->position.Y][this->position.X + 1].element !=
-         CurrentLevel.back) &&
-         (this->course.X > 0)) {
+		 CurrentLevel.back) &&
+		 (this->course.X > 0)) {
 		CurrentLevel.destroyBlock(this->position.Y, this->position.X + 1);
 		this->course.X = -(this->course.X);
 		i++;
