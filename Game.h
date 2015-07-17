@@ -24,8 +24,8 @@ public:
 	HBRUSH GreyBlackBrush;
 	HBRUSH GreyLightBrush;
 	HBRUSH PlatformBrush;
-	HBRUSH White;
-	HBRUSH Black;
+	HBRUSH BallBrush;
+	HBRUSH BlackBrush;
 
 	int CurrentLevelNumber;
 	std::wstring CurrentLevelName;
@@ -56,5 +56,6 @@ public:
 	void printInfo();
 	void Play(); // Начало игры
 	void End(); //Конец уровня!
-	void Game::Shooting();
+	void Shooting();
+	void BlackBlockMoving();
 };

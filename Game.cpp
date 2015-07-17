@@ -27,8 +27,8 @@ Game::Game() {
 	GreyBlackBrush = CreateSolidBrush(RGB(128, 128, 128));
 	GreyLightBrush = CreateSolidBrush(RGB(255, 255, 255));
 	PlatformBrush = CreateSolidBrush(RGB(199, 123, 16));
-	White = CreateSolidBrush(RGB(255, 255, 0));
-	Black = CreateSolidBrush(RGB(255, 255, 0));
+	BallBrush = CreateSolidBrush(RGB(159, 129, 112));
+	BlackBrush = CreateSolidBrush(RGB(0, 0, 0));
 
 }
 
@@ -49,13 +49,13 @@ Game::~Game (){
 	DeleteObject(GreyBlackBrush);
 	DeleteObject(GreyLightBrush);
 	DeleteObject(PlatformBrush);
-	DeleteObject(White);
-	DeleteObject(Black);
+	DeleteObject(BallBrush);
+	DeleteObject(BlackBrush);
 
 }
 
 void Game::Play() {
-	CurrentBall.timer++; // счетчик проходов для замедления скорости шара
+	CurrentBall.timer++; // счетчик проходов для увеличения скорости шара
 	if (CurrentBall.timer >= CurrentBall.speed) {
 		CurrentBall.collision();
 		CurrentBall.collision();
@@ -65,9 +65,12 @@ void Game::Play() {
 		}
 		CurrentBall.timer = 0;
 		CurrentBall.stepNum++;
+		CurrentGame.Shooting();
+		CurrentGame.BlackBlockMoving();
 	}
+	
 	if (CurrentBall.stepNum >= CurrentLevel.stepNorm) { //если прошли опред кол-во шагов, то ускоряемся
-		CurrentBall.speedUp(2);
+		CurrentBall.speedUp(1);
 		CurrentBall.stepNum = 0;
 	}
 	InvalidateRect(hWnd, NULL, TRUE);
@@ -242,6 +245,7 @@ bool Game::loadLevelsFromFile()
 
 
 void Game::End() {
+	KillTimer(hWnd, GamePlayTimer);
 	int i = MessageBox(hWnd, L"Сохранить игру", 
 		L"Сохранение", MB_YESNO | MB_ICONQUESTION
 		);
@@ -257,6 +261,7 @@ void Game::End() {
 	CurrentPlatform.setStandardPosition();
 	CurrentBall.setStandard();
 	readConfig();
+	SetTimer(hWnd, GamePlayTimer, CurrentGame.FPS, NULL);
 	showMode = 0;
 }
 
@@ -298,7 +303,63 @@ bool Game::CurrentLeveNumberControl(int num){
 }
 
 void Game::Shooting(){
-	int x = rand() % CurrentLevel.Size_Columns;
-	int y = rand() % CurrentLevel.Size_Strings;
-	
+	int chance = rand() % 100;
+	if (chance >30 && chance < 33){
+		int x = rand() % CurrentLevel.Size_Columns;
+		int y = rand() % CurrentLevel.Size_Strings;
+		if (CurrentLevel.Map[y][x].element == CurrentLevel.back) 
+		{
+			CurrentLevel.Map[y][x].element = L'b';
+		}
+	}
+}
+
+void Game::BlackBlockMoving(){
+	for (int i = 0; i < CurrentLevel.Size_Strings; i++)
+	{
+		for (int j = 0; j < CurrentLevel.Size_Columns; j++)
+		{
+			int X = j, Y = i;
+			if (CurrentLevel.Map[Y][X].element == L'b'){
+			COORD course;
+			course.X = 1 + rand() % 3 - 2;
+			course.Y = 1 + rand() % 3 - 2;
+
+			// обработка выхода за экран!
+			if ((X <= 0) && (course.X < 0)) {
+				CurrentLevel.Map[Y][X].element = L' ';			
+				break;
+			}
+			if ((Y <= 0) && (course.Y < 0)) {
+				CurrentLevel.Map[Y][X].element = L' ';			
+				break;
+			}
+			if ((X >= (CurrentLevel.Size_Columns - 1)) && (course.X > 0)) {
+				CurrentLevel.Map[Y][X].element = L' ';			
+				break;
+			}
+			if (Y == (CurrentLevel.Size_Strings - 1)) {
+				CurrentLevel.Map[Y][X].element = L' ';			
+				break;
+			}
+			CurrentLevel.Map[Y][X].element = L'G';
+				if (course.X > 0) {
+					X++;
+				}else {
+					X--;
+				}
+				if (course.Y > 0) {
+					Y++;
+				}else {
+					Y--;
+				}
+			if (Y <= 0){
+				CurrentLevel.Map[Y][X].element = L' ';			
+				break;
+			}
+			if (CurrentLevel.Map[Y][X].element == CurrentLevel.back)
+				CurrentLevel.Map[Y][X].element = L'b';
+			}
+		}
+	}
 }

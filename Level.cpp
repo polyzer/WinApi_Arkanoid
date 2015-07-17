@@ -25,7 +25,7 @@ void Level::End(bool status) {
 	if (status == true) {
 		if (CurrentGame.CurrentLevelNumber == (CurrentGame.Levels.size() - 1)){
 			MessageBox(hWnd, L"Вы прошли все доступные уровни! Поехали сначала...", 
-				L"Конец", MB_OK | MB_ICONQUESTION
+				L"Конец", MB_OK | MB_ICONINFORMATION
 			);
 			CurrentGame.CurrentLevelNumber = 0;
 		} else {

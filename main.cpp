@@ -82,8 +82,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
 				CurrentGame.Menu();
 		break;
 		case WM_PAINT: 
-			//костылек... не ясно почему затирается значение размера карты по строкам
-//			CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
 			hdc = BeginPaint(hWnd, &ps);
 			if (showMode)
 				CurrentGame.render(sx, sy);

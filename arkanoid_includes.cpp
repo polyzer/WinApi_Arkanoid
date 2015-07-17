@@ -42,29 +42,41 @@ void setElementColor(Block block){
 	switch(block.element) 
 	{
 		case L'c':
-			FillRect(hdc, &block.rect, CurrentGame.BlueBlackBrush);
+			FillRect(hdc, &block.rect, CurrentGame.BlueLightBrush);
 		break;
 		case L'C':
-			FillRect(hdc, &block.rect, CurrentGame.BlueLightBrush);
+			FillRect(hdc, &block.rect, CurrentGame.BlueBlackBrush);
 		break;
 		case L'g':
-			FillRect(hdc, &block.rect, CurrentGame.GreenBlackBrush);
+			FillRect(hdc, &block.rect, CurrentGame.GreenLightBrush);
 		break;
 		case L'G':
-			FillRect(hdc, &block.rect, CurrentGame.BlueLightBrush);
+			FillRect(hdc, &block.rect, CurrentGame.GreenBlackBrush);
 		break;
 		case L'r':
-			FillRect(hdc, &block.rect, CurrentGame.RedBlackBrush);
+			FillRect(hdc, &block.rect, CurrentGame.RedLightBrush);
 		break;
 		case L'R':
-			FillRect(hdc, &block.rect, CurrentGame.RedLightBrush);
+			FillRect(hdc, &block.rect, CurrentGame.RedBlackBrush);
 		break;
 		case L' ':
 			hpen = (HPEN) GetStockObject(NULL_PEN);	
 		break;
 		case L'P':
 			FillRect(hdc, &block.rect, CurrentGame.PlatformBrush);
-		break;			
+		break;
+		case L'B':
+			FillRect(hdc, &block.rect, CurrentGame.BallBrush);
+		break;
+		case L'b':
+			FillRect(hdc, &block.rect, CurrentGame.BlackBrush);
+		break;
+		case L'y':
+			FillRect(hdc, &block.rect, CurrentGame.YellowLightBrush);
+		break;
+		case L'Y':
+			FillRect(hdc, &block.rect, CurrentGame.YellowBlackBrush);
+		break;
 		default:
 			FillRect(hdc, &block.rect, CurrentGame.GreyBlackBrush);
 		break;
@@ -78,12 +90,12 @@ bool createConfig() //создание файла концигурации
 	if ((config_Fp = _wfopen(config_file_name_ca, L"w")) != NULL)
 	{
 	  MessageBox(hWnd, L"Конфигурационный файл создан", 
-		L"Конфигурационный файл", MB_OK | MB_ICONQUESTION
+		L"Конфигурационный файл", MB_OK | MB_ICONINFORMATION
 	  );
 		return true;
 	} else {
 		MessageBox(hWnd, L"Не удалось создать конфигурационный файл!!!!", 
-			L"Конфигурационный файл", MB_OK | MB_ICONQUESTION
+			L"Конфигурационный файл", MB_OK | MB_ICONINFORMATION
 		);
 		return false;
 	}
@@ -115,12 +127,6 @@ bool saveConfig() // сохранение концигурации при выходе
 			fwprintf(file_Fp, L"\n");
 		}
 		fclose(file_Fp);
-		MessageBox(hWnd, CurrentGame.CurrentLevelName.c_str(), 
-		L"Игра", MB_OK | MB_ICONQUESTION
-		);
-		MessageBox(hWnd, CurrentGame.CurrentLevelName.c_str(), 
-		L"Игра", MB_OK | MB_ICONQUESTION
-		);
 		return true;
 	} else {
 		fclose(file_Fp);
@@ -194,7 +200,6 @@ bool readConfig() // чтение и загрузка конфигурации
 				fwscanf(file_Fp, L"%i %i", &CurrentBall.course.X, &CurrentBall.course.Y);
 				fwscanf(file_Fp, L"%i %i", &CurrentPlatform.position.X, &CurrentPlatform.position.Y);
 				fseek(file_Fp, 3, SEEK_CUR);
-				// Костыль!!!!!
 				CurrentLevel.Size_Strings = CurrentGame.Levels[CurrentGame.CurrentLevelNumber]->Size_Strings;
 				if (CurrentGame.saveStatus == 1) {
 					for (int i = 0; i < CurrentLevel.Size_Strings; i++) {
@@ -206,22 +211,24 @@ bool readConfig() // чтение и загрузка конфигурации
 				} else if (CurrentGame.saveStatus == 0) {
 					CurrentGame.CurrentLevelNumber = 0;
 					CurrentGame.loadCurrentLevelByNumber();
-			   	    MessageBox(hWnd, L"Новая игра!", 
-					L"Игра", MB_OK | MB_ICONQUESTION
+					MessageBox(hWnd, L"Новая игра!", 
+					L"Игра", MB_OK | MB_ICONINFORMATION
 					);	
+					SetTimer(hWnd, GamePlayTimer, CurrentGame.FPS, NULL);
+
 				}
 				fclose(file_Fp);
 				return true;
 			} else {
 		  	    MessageBox(hWnd, L"Конфигурационный файл существует, но из него невозможно считать данные!", 
-				L"Конфигурационный файл", MB_OK | MB_ICONQUESTION
+					L"Конфигурационный файл", MB_OK | MB_ICONINFORMATION
 				);	
 				fclose(file_Fp);
 				return false;
 			}
 		} else {
 	 	    MessageBox(hWnd, L"Не удается записать и прочитать данные!", 
-			L"Данные", MB_OK | MB_ICONQUESTION
+			L"Данные", MB_OK | MB_ICONINFORMATION
 			);	
 			return false;
 		}
